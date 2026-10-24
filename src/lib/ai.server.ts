@@ -3,7 +3,7 @@
 //
 // Keys are read from environment variables on the server only:
 //   ANTHROPIC_API_KEY  -> Claude (Messages API)
-//   GEMINI_API_KEY     -> Google Gemini (optional GEMINI_MODEL, default gemini-2.5-flash)
+//   GEMINI_API_KEY     -> Google Gemini (optional GEMINI_MODEL, default gemini-3.8-flash, with fallbacks)
 //   LOVABLE_API_KEY    -> Lovable AI gateway (set automatically inside Lovable Cloud)
 
 const TIMEOUT_MS = 20_000;
@@ -48,21 +48,33 @@ export async function generateText(instructions: string, prompt: string): Promis
 
   const geminiKey = process.env["GEMINI_API_KEY"];
   if (geminiKey) {
-    const model = process.env["GEMINI_MODEL"] ?? "gemini-2.5-flash";
-    // Key goes in a header, never in the URL.
-    const res = await withTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-goog-api-key": geminiKey },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: instructions }] },
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 800, temperature: 0.2, thinkingConfig: { thinkingBudget: 0 } },
-      }),
-    });
-    if (!res.ok) throw new Error(`Gemini API ${res.status}`);
-    const json = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
-    const text = (json.candidates?.[0]?.content?.parts ?? []).map((p) => p.text ?? "").join("").trim();
-    return text || null;
+    // Try the configured model first, then current Flash models. A 404/400 means "unknown model", so move on.
+    const models = [process.env["GEMINI_MODEL"], "gemini-3.8-flash", "gemini-3.6-flash", "gemini-flash-latest"].filter(
+      (m): m is string => Boolean(m),
+    );
+    let lastStatus = 0;
+    for (const model of models) {
+      // Key goes in a header, never in the URL.
+      const res = await withTimeout(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json", "x-goog-api-key": geminiKey },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: instructions }] },
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            generationConfig: { maxOutputTokens: 1500, temperature: 0.2 },
+          }),
+        },
+      );
+      lastStatus = res.status;
+      if (res.status === 404 || res.status === 400) continue;
+      if (!res.ok) throw new Error(`Gemini API ${res.status} (${model})`);
+      const json = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
+      const text = (json.candidates?.[0]?.content?.parts ?? []).map((p) => p.text ?? "").join("").trim();
+      return text || null;
+    }
+    throw new Error(`Gemini API ${lastStatus} (no model accepted)`);
   }
 
   const lovableKey = process.env["LOVABLE_API_KEY"];
