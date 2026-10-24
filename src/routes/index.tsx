@@ -47,6 +47,26 @@ function Home() {
 
       <section id="positioning" className="border-t border-border py-12">
         <h2 className="text-2xl font-semibold">Where I'm aiming</h2>
+        <dl className="mt-4 grid gap-3 rounded-lg border border-border bg-card p-5 text-sm sm:grid-cols-3">
+          <div>
+            <dt className="font-semibold">What the machine does</dt>
+            <dd className="mt-1">
+              A language model turns numbers it is given into plain sentences, in English or Hindi.
+            </dd>
+          </div>
+          <div>
+            <dt className="font-semibold">What it cannot promise</dt>
+            <dd className="mt-1">
+              The same answer twice, or correct arithmetic. Ask the same question twice and the wording changes.
+            </dd>
+          </div>
+          <div>
+            <dt className="font-semibold">What it means for the product</dt>
+            <dd className="mt-1">
+              Code decides every rupee figure; the model only explains, and every reply is checked before it is shown.
+            </dd>
+          </div>
+        </dl>
         <p className="mt-4">
           I'm a product manager in training (PGPM, Great Lakes Institute of Management) and the AI PM role I'm
           targeting is <strong>AI features at an established company</strong>, specifically Indian consumer fintech

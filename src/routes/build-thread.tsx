@@ -95,6 +95,14 @@ const iterations = [
       "Audited every page against the marking rubric, then fixed the gaps in one commit (ef24edc). Details under Overrides.",
     ev: "The review brief below, the commit and the live site.",
   },
+  {
+    n: "8",
+    job: "Check every page against the course session templates (S1, S5, S6) and fix what does not match.",
+    who: "Claude",
+    result:
+      "Positioning now opens with the S1 Machine Card. The memo follows the S5 skeleton and word limits, with an override log. The spec has the S6 fields (feature, user, tone, length, what it may cite, three examples, three named failure cases). The self-test grew from 8 to 13 checks to meet the S6 eval minimum.",
+    ev: "Commit history and the live pages.",
+  },
 ];
 
 const overrides = [

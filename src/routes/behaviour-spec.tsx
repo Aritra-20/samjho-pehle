@@ -23,6 +23,12 @@ function Spec() {
     <article className="doc mx-auto max-w-3xl px-5 py-14">
       <h1 className="text-4xl font-semibold">AI-worthiness argument and behaviour spec</h1>
       <p className="mt-3 font-serif text-lg text-muted-foreground">Samjho Pehle. Never list FIRST.</p>
+      <p className="mt-6">
+        <strong>Feature:</strong> before an options order is placed, show what it can lose in rupees and explain it in
+        plain English or Hindi.
+        <br />
+        <strong>User:</strong> a first-time options trader on an Indian broking app, about to place a single order.
+      </p>
 
       <h2>1. The never list (written first)</h2>
       <ol>
@@ -75,17 +81,38 @@ function Spec() {
               <td className="font-medium">Intended</td>
               <td>
                 Takes structured input (index, option type, strike, lot size, premium, buy or sell). Code returns max
-                loss, max profit and break-even. The AI explains the result in 3 to 4 plain sentences in the chosen
-                language, and the explanation must contain the code's exact maximum-loss figure. The maximum-loss card
-                is always shown by the interface, separately from the AI text.
+                loss, max profit and break-even. The AI explains the result in the chosen language, and the explanation
+                must contain the code's exact maximum-loss figure. The maximum-loss card is always shown by the
+                interface, separately from the AI text.
+                <br />
+                <strong>Tone:</strong> calm and plain, second person, no jargon left unexplained, no hype.{" "}
+                <strong>Length:</strong> 3 to 4 sentences; follow-up answers 2 to 3.{" "}
+                <strong>May cite:</strong> only the numbers the code computed and the values the user entered. No
+                outside prices, news or sources.
               </td>
             </tr>
             <tr>
               <td className="font-medium">Refusal</td>
               <td>
-                Asked "should I buy this?", "which strike?" or "will Nifty go up?", it says: "I can't give advice or
-                predict prices. I can explain the risk of the order you entered." It then offers to explain the order.
-                Personal details are refused and never sent to the AI.
+                Asked "should I buy this?", "which strike?" or "will Nifty go up?", it says exactly:{" "}
+                <strong>"I can't give advice or predict prices. I can explain the risk of the order you entered."</strong>{" "}
+                Personal details get exactly:{" "}
+                <strong>"Please don't share personal details here. I can't accept them."</strong> Refused text is never
+                sent to the AI.
+              </td>
+            </tr>
+            <tr>
+              <td className="font-medium">Failure, doesn't know</td>
+              <td>
+                Asked something outside this order (tax, another stock, the news), it replies "I can explain the risk
+                of the order you entered." and repeats the maximum loss. It does not guess.
+              </td>
+            </tr>
+            <tr>
+              <td className="font-medium">Failure, too slow</td>
+              <td>
+                If the AI has not answered within 20 seconds, the call is cancelled and the code-written template
+                explanation is shown instead. The numbers on the cards never wait for the AI.
               </td>
             </tr>
             <tr>
@@ -96,7 +123,7 @@ function Spec() {
               </td>
             </tr>
             <tr>
-              <td className="font-medium">Failure, AI problem</td>
+              <td className="font-medium">Failure, unavailable or rule broken (hand-off to template)</td>
               <td>
                 If the AI call fails, is unavailable, or its text breaks a rule (a rupee figure the code did not
                 produce, advice or prediction wording, or a missing max-loss figure), the AI text is discarded. The
@@ -108,6 +135,49 @@ function Spec() {
           </tbody>
         </table>
       </div>
+
+      <h3 className="mt-8 mb-2 text-lg font-semibold">Three examples (synthetic numbers)</h3>
+      <div className="overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Input</th>
+              <th>Desired</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Buy call, strike 20,000, lot size 50, premium ₹150.</td>
+              <td>
+                Cards: max loss ₹7,500, break-even 20,150, max profit no upper limit. Explanation in 3 to 4 sentences,
+                ending "Maximum loss: ₹7,500."
+              </td>
+            </tr>
+            <tr>
+              <td>Same order, then "what does lot size mean?"</td>
+              <td>
+                Lot size is the fixed number of units in one contract; the rupee figures are premium × lot size. Ends
+                "Maximum loss: ₹7,500."
+              </td>
+            </tr>
+            <tr>
+              <td>Sell call, strike 20,000, lot size 50, premium ₹150.</td>
+              <td>
+                Cards: max loss "No upper limit", max profit ₹7,500. Explanation says the loss grows with every point
+                above 20,150 and has no upper limit.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 className="mt-8 mb-2 text-lg font-semibold">Eval (minimum)</h3>
+      <p>
+        The prototype's self-test runs 13 checks live in the browser: 5 intended questions, 5 refusal attacks (3 advice
+        or prediction, 2 personal data) and 3 failure or hand-off checks (bad input, AI unavailable, AI too slow).
+        Every result is computed when you press "Run tests", not written in advance. The same checks run as unit tests
+        in the repository.
+      </p>
 
       <h2>4. How each never-rule is enforced</h2>
       <div className="overflow-x-auto">

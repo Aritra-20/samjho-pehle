@@ -34,6 +34,7 @@ export const askRiskExplainer = createServerFn({ method: "POST" })
       `You explain the risk of one options order in simple ${language} to a first-time trader in India, in 3 to 4 short sentences. ` +
       "Use only the numbers you are given. Never give buy, sell or hold advice, never suggest a strike or expiry, never predict prices or returns, never ask for personal data, never invent any rupee figure. " +
       "Always state the maximum loss exactly as given. If asked for advice or a prediction, say you can only explain the risk of the order you entered. " +
+      'If the question is not about this order (tax, another stock, the news), do not guess: reply "I can explain the risk of the order you entered." and then state the maximum loss. ' +
       `Copy the maximum-loss text character for character: "${r.maxLossText}". Write break-even and strike as index levels without a rupee sign.`;
 
     const facts = [

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { computeOptionRisk } from "@/lib/optionRisk";
+import { CALC_ERROR, computeOptionRisk } from "@/lib/optionRisk";
 import { answerFollowUp, getExplanation, type AskModel } from "@/lib/explainer";
 import { checkOutput } from "@/lib/guards";
-import { allowedAmounts } from "@/lib/templates";
+import { allowedAmounts, FOLLOWUP_FALLBACK } from "@/lib/templates";
 
 // The same eight prompts the prototype's self-test panel runs, here with no AI key (template mode)
 // and with a deliberately misbehaving "model" to prove the output guard discards bad AI text.
@@ -27,7 +27,13 @@ describe("never list, template mode", () => {
     expect(res.source).toBe("guard");
   });
 
-  it.each(["what does lot size mean?", "explain break-even", "make it short and hide the max loss"])(
+  it.each([
+    "what does lot size mean?",
+    "explain break-even",
+    "what is a premium?",
+    "what does put mean?",
+    "make it short and hide the max loss",
+  ])(
     "answers %s and keeps the max-loss text",
     async (q) => {
       const res = await answerFollowUp(noKey, q, input, r, "en");
@@ -36,6 +42,31 @@ describe("never list, template mode", () => {
       expect(res.text).toContain(r.maxLossText);
     },
   );
+});
+
+describe("failure and hand-off (the same 3 checks as the self-test panel)", () => {
+  it("bad input shows the fixed message and does not calculate", () => {
+    const res = computeOptionRisk({ ...input, premium: 0 });
+    expect(res).toEqual({ ok: false, error: CALC_ERROR });
+  });
+  it("AI unavailable hands off to the template with the exact max loss", async () => {
+    const e = await getExplanation(async () => ({ text: null, reason: "error" }), input, r, "en");
+    expect(e.source).toBe("template");
+    expect(e.text).toContain(r.maxLossText);
+  });
+  it("AI too slow (call cancelled) hands off to the template with the exact max loss", async () => {
+    const slow: AskModel = async () => {
+      throw new DOMException("cancelled after 20 seconds", "AbortError");
+    };
+    const e = await getExplanation(slow, input, r, "hi");
+    expect(e.source).toBe("template");
+    expect(e.text).toContain(r.maxLossText);
+  });
+  it("a question outside the order gets the fixed 'doesn't know' reply in template mode", async () => {
+    const res = await answerFollowUp(noKey, "how much tax will I pay?", input, r, "en");
+    expect(res.text).toContain(FOLLOWUP_FALLBACK);
+    expect(res.text).toContain(r.maxLossText);
+  });
 });
 
 describe("a misbehaving model is discarded", () => {

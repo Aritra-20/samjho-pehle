@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SEBI_PAPER_URL, SEBI_SOURCE_URL } from "@/content/site";
 
 const TITLE = "Problem-framing memo | Samjho Pehle";
@@ -28,17 +28,16 @@ function Memo() {
         Samjho Pehle: a risk explainer for first-time options traders
       </p>
 
-      <h2>The real problem</h2>
+      <h2>1. Real problem</h2>
       <p>
-        First-time options traders place orders without a clear picture of their worst case in rupees. Broking apps
-        show strike prices, premiums and lot sizes, but not, in plain words, "if this goes wrong, you can lose up to
-        ₹X." <A /> The stakes are visible in SEBI's own data: in FY26, 87.7% of individual traders in equity
-        derivatives incurred net losses, down from 90.9% in FY25 (source: SEBI paper, linked below). A press-release
-        summary also reports that nearly 97% of traders predominantly bought options; I did not find that figure in
-        the SEBI paper, so treat it as unverified. The people most exposed are new users, who do not yet know what a
-        lot size does to a small premium. <A />
+        First-time options traders on Indian broking apps place orders without seeing their worst case in rupees. The
+        app shows strike, premium and lot size, but never says, in plain words, "if this goes wrong, you can lose up to
+        ₹X." <A /> <strong>Evidence hook:</strong> SEBI's own FY26 study found 87.7% of individual traders in equity
+        derivatives made net losses, down from 90.9% in FY25. A press-release summary adds that nearly 97% mostly
+        bought options; that figure is not in SEBI's paper, so treat it as unverified. Those most exposed are new
+        users, who do not yet know what a lot size does to a small premium. <A />
       </p>
-      <p>
+      <p className="text-sm">
         Sources:{" "}
         <a href={SEBI_PAPER_URL} target="_blank" rel="noopener noreferrer">
           SEBI, Profitability of Individual Traders in the Equity Derivatives Segment (FY25–FY26), Aug 2026
@@ -49,71 +48,64 @@ function Memo() {
         </a>
       </p>
 
-      <h2>The false problems</h2>
-      <p className="text-muted-foreground">(things that look like the problem but are not)</p>
+      <h2>2. False problems</h2>
       <ol>
-        <li>"Users need a chatbot." They need one clear number before they click, not a conversation.</li>
+        <li>"Users need a chatbot." They need one clear rupee number before they click, not a conversation.</li>
         <li>
-          "Users need stock tips." An app that is not a SEBI-registered adviser cannot give them, and should not.{" "}
+          "Users need tips." An app that is not a SEBI-registered adviser cannot give them, and should not.{" "}
           <span className="tag">[Assumption: my reading of SEBI's adviser rules, not legal advice.]</span>
         </li>
         <li>
-          "Users are simply reckless." Some are. But many cannot picture the risk, and that part is fixable. <A />
-        </li>
-        <li>
-          "A risk pop-up already exists, so we're done." A pop-up that people tap past does not count as understanding.{" "}
-          <span className="tag">[Assumption: this is true of existing broker screens. I have not measured it.]</span>
-        </li>
-        <li>
-          "English-only is fine." Untested for Tier 2 and Tier 3 users. <A />
+          "A risk pop-up already exists, so we're done." A pop-up people tap past is not understanding.{" "}
+          <span className="tag">[Assumption: I have not measured this.]</span>
         </li>
       </ol>
 
-      <h2>The unknowns, and what would resolve each</h2>
+      <h2>3. Unknowns that remain</h2>
       <div className="overflow-x-auto">
         <table>
           <thead>
             <tr>
-              <th>Unknown</th>
-              <th>How to resolve</th>
+              <th>What would change my mind</th>
+              <th>Cheapest test that could disprove me</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>Do users read a risk screen or tap past it?</td>
-              <td>Click-through and time-on-screen for the existing risk pop-up, from the broker's analytics.</td>
+              <td>Most users already read the existing risk screen.</td>
+              <td>Click-through and time-on-screen from the broker's analytics.</td>
             </tr>
             <tr>
-              <td>Does seeing the rupee loss change behaviour, or just scare people off?</td>
-              <td>A/B test: compare order size and 30-day activity, with and without the explainer.</td>
+              <td>Seeing the rupee loss only scares users off.</td>
+              <td>A/B test order size and 30-day activity.</td>
             </tr>
             <tr>
-              <td>Which language do first-time traders prefer?</td>
-              <td>App-language settings data, or a 15 to 20 user survey.</td>
-            </tr>
-            <tr>
-              <td>Is an AI explanation better than a fixed calculator screen?</td>
-              <td>Test both versions with the same users.</td>
-            </tr>
-            <tr>
-              <td>Does a clearer risk screen reduce "why did I lose more than I expected" support tickets?</td>
-              <td>Compare ticket tags before and after, with the support team.</td>
+              <td>A fixed template explains as well as AI.</td>
+              <td>Show both, in English and Hindi, to the same 15 to 20 users.</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <h2>What I would measure</h2>
-      <p>
-        <span className="tag">[Assumption: these are the metrics I would choose. I have no data on either.]</span>
-      </p>
-      <p>
-        <strong>Primary:</strong> share of new options traders still active at day 30 (D30 retention), after their
-        first big loss. <strong>Secondary:</strong> support tickets about unexpected losses.
+      <h2>Override log</h2>
+      <ol>
+        <li>
+          The AI-built draft carried "nearly 97% bought options" from a press summary. I checked SEBI's own paper; the
+          figure is not there, so it is now marked unverified.
+        </li>
+        <li>The AI-built memo was meant to be one printed page; it printed on two. I cut it to one.</li>
+      </ol>
+      <p className="text-sm">
+        Full log: <Link to="/build-thread">build thread</Link>.
       </p>
 
-      <h2>What this memo does not claim</h2>
-      <p>It claims no impact. Every impact statement above is a hypothesis to test, not a finding.</p>
+      <h2>What I would measure</h2>
+      <p>
+        <strong>Primary:</strong> share of new options traders still active at day 30. <strong>Secondary:</strong>{" "}
+        support tickets about unexpected losses.{" "}
+        <span className="tag">[Assumption: my choice of metrics; I have no data on either.]</span> This memo claims no
+        impact; every impact statement is a hypothesis to test.
+      </p>
     </article>
   );
 }
