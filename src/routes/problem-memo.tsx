@@ -30,12 +30,14 @@ function Memo() {
 
       <h2>1. Real problem</h2>
       <p>
-        First-time options traders on Indian broking apps place orders without seeing their worst case in rupees. The
-        app shows strike, premium and lot size, but never says, in plain words, "if this goes wrong, you can lose up to
-        ₹X." <A /> <strong>Evidence hook:</strong> SEBI's own FY26 study found 87.7% of individual traders in equity
-        derivatives made net losses, down from 90.9% in FY25. A press-release summary adds that nearly 97% mostly
-        bought options; that figure is not in SEBI's paper, so treat it as unverified. Those most exposed are new
-        users, who do not yet know what a lot size does to a small premium. <A />
+        First-time options traders see what an order costs, but not what it means. On Zerodha Kite, buying one lot of
+        an ONGC put showed "Margin ₹7,447.50 + ₹26.73": the amount paid (2,250 units × ₹3.31), under a trading label.
+        It did not say that all of it can be lost, or where break-even is.{" "}
+        <span className="tag">[My own check, 24 Oct 2026, one screen, no order placed.]</span> For a seller, margin is
+        not the worst case at all: the loss on a sold call has no upper limit.{" "}
+        <span className="tag">[Assumption: I did not check the sell screen.]</span> <strong>Evidence hook:</strong>{" "}
+        SEBI's FY26 study found 87.7% of individual traders in equity derivatives made net losses, down from 90.9% in
+        FY25.
       </p>
       <p className="text-sm">
         Sources:{" "}
@@ -90,8 +92,12 @@ function Memo() {
       <h2>Override log</h2>
       <ol>
         <li>
+          The draft said broking apps never show the worst case in rupees. I opened a real order screen: it does show
+          the amount paid, as "Margin". The problem is the label and the missing warning, so I rewrote it.
+        </li>
+        <li>
           The AI-built draft carried "nearly 97% bought options" from a press summary. I checked SEBI's own paper; the
-          figure is not there, so it is now marked unverified.
+          figure is not there, so I dropped it.
         </li>
         <li>The AI-built memo was meant to be one printed page; it printed on two. I cut it to one.</li>
       </ol>

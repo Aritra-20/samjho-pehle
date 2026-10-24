@@ -115,12 +115,16 @@ const overrides = [
     a: "My first-draft brief said \"every ₹ / Rs / INR / रुपये amount in it must equal a code-computed value\". A probe showed 99999, \"रु 99999\", \"99,999/-\" and \"1.5 lakh rupees\" all got through. I rewrote the rule in the brief: any number of 1,000 or more, or written with lakh or crore, must match a code-computed value. Then the code changed and six tests were added (57 pass). Amounts spelled out in words are still not caught and are listed as a known gap.",
   },
   {
+    t: "The memo's core claim was wrong.",
+    a: "My brief said broking apps never show \"if this goes wrong, you can lose up to ₹X.\" I opened a real Zerodha Kite order screen (no order placed): it does show the amount paid, as \"Margin ₹7,447.50\". What it does not show is that all of it can be lost, or where break-even is. I rewrote the real problem around the label and the missing warning.",
+  },
+  {
     t: "The memo printed on two pages.",
     a: "My brief said one printable page. Rendered to A4 it ran to two. A print style brought it to one page with no text removed.",
   },
   {
     t: "The memo's SEBI figure was only half supported.",
-    a: "My brief's text cited 87.7% and \"nearly 97%\" to a press-release summary. SEBI's own paper confirms 87.7% (90.9% the year before) but does not contain the 97% figure. The memo now cites the paper, tags the other claims [Assumption], and marks the 97% as unverified.",
+    a: "My brief's text cited 87.7% and \"nearly 97%\" to a press-release summary. SEBI's own paper confirms 87.7% (90.9% the year before) but does not contain the 97% figure. The memo now cites the paper, tags the other claims [Assumption], and drops the 97%.",
   },
   {
     t: "The spec described logging inaccurately.",
@@ -129,7 +133,7 @@ const overrides = [
 ];
 
 const NOTE =
-  "The AI got three things wrong, and I only caught them by checking. First, Lovable's draft ended with a broken preview and no page opened, so I did not trust \"all tests pass\". Second, my own brief's output guard covered only amounts with a currency sign. A probe showed 99999, \"रु 99999\" and \"1.5 lakh rupees\" slipped through, so I rewrote that rule in the brief, then fixed the code and added six tests. Third, the memo printed on two pages and cited a 97% figure that is not in SEBI's own paper. It now fits one page and flags that figure as unverified. Next time I will state the Role explicitly, give one job per prompt, and ask for the plan first.";
+  "Four things in the draft were wrong, and I only caught them by checking. Lovable's build ended with a broken preview and no page opened, so I did not trust \"all tests pass\". My brief's output guard covered only amounts with a currency sign; a probe showed 99999 and \"1.5 lakh rupees\" slipped through, so I rewrote the rule, fixed the code and added tests. The memo cited a 97% figure that is not in SEBI's own paper, so I dropped it. Most important, the memo claimed broking apps never show the worst case in rupees. I opened a real Kite order screen: it shows \"Margin ₹7,447.50\". The real problem is the label and the missing warning, so I rewrote it. Next time I will state the Role, give one job per prompt, ask for the plan first, and check the real product before writing the problem.";
 
 function Thread() {
   return (
