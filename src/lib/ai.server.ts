@@ -3,7 +3,7 @@
 //
 // Keys are read from environment variables on the server only:
 //   ANTHROPIC_API_KEY  -> Claude (Messages API)
-//   GEMINI_API_KEY     -> Google Gemini (optional GEMINI_MODEL, default gemini-3.8-flash, with fallbacks)
+//   GEMINI_API_KEY     -> Google Gemini (optional GEMINI_MODEL, default gemini-3.5-flash-lite, with fallbacks)
 //   LOVABLE_API_KEY    -> Lovable AI gateway (set automatically inside Lovable Cloud)
 
 const TIMEOUT_MS = 20_000;
@@ -48,8 +48,8 @@ export async function generateText(instructions: string, prompt: string): Promis
 
   const geminiKey = process.env["GEMINI_API_KEY"];
   if (geminiKey) {
-    // Try the configured model first, then current Flash models. A 404/400 means "unknown model", so move on.
-    const models = [process.env["GEMINI_MODEL"], "gemini-3.8-flash", "gemini-3.6-flash", "gemini-flash-latest"].filter(
+    // Try the configured model first, then fast Flash-Lite models. A 404/400 means "unknown model", so move on.
+    const models = [process.env["GEMINI_MODEL"], "gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.6-flash"].filter(
       (m): m is string => Boolean(m),
     );
     let lastStatus = 0;
@@ -63,7 +63,7 @@ export async function generateText(instructions: string, prompt: string): Promis
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: instructions }] },
             contents: [{ role: "user", parts: [{ text: prompt }] }],
-            generationConfig: { maxOutputTokens: 1500, temperature: 0.2 },
+            generationConfig: { maxOutputTokens: 800, temperature: 0.2 },
           }),
         },
       );
