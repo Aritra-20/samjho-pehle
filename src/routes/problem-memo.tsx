@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SEBI_SOURCE_URL } from "@/content/site";
+import { SEBI_PAPER_URL, SEBI_SOURCE_URL } from "@/content/site";
 
 const TITLE = "Problem-framing memo | Samjho Pehle";
 const DESC =
@@ -32,14 +32,20 @@ function Memo() {
       <p>
         First-time options traders place orders without a clear picture of their worst case in rupees. Broking apps
         show strike prices, premiums and lot sizes, but not, in plain words, "if this goes wrong, you can lose up to
-        ₹X." The stakes are visible in SEBI's own data: in its FY26 study, 87.7% of individual traders in equity
-        derivatives incurred net losses, and nearly 97% predominantly bought options (source: SEBI press release
-        50/2026, as summarised at taxguru.in; verify against the SEBI primary study before quoting elsewhere). The
-        people most exposed are new users, who do not yet know what a lot size does to a small premium.
+        ₹X." <A /> The stakes are visible in SEBI's own data: in FY26, 87.7% of individual traders in equity
+        derivatives incurred net losses, down from 90.9% in FY25 (source: SEBI paper, linked below). A press-release
+        summary also reports that nearly 97% of traders predominantly bought options; I did not find that figure in
+        the SEBI paper, so treat it as unverified. The people most exposed are new users, who do not yet know what a
+        lot size does to a small premium. <A />
       </p>
       <p>
+        Sources:{" "}
+        <a href={SEBI_PAPER_URL} target="_blank" rel="noopener noreferrer">
+          SEBI, Profitability of Individual Traders in the Equity Derivatives Segment (FY25–FY26), Aug 2026
+        </a>
+        {" · "}
         <a href={SEBI_SOURCE_URL} target="_blank" rel="noopener noreferrer">
-          SEBI FY26 studies, press release summary
+          press-release summary (PR 50/2026, taxguru.in)
         </a>
       </p>
 
@@ -47,8 +53,13 @@ function Memo() {
       <p className="text-muted-foreground">(things that look like the problem but are not)</p>
       <ol>
         <li>"Users need a chatbot." They need one clear number before they click, not a conversation.</li>
-        <li>"Users need stock tips." An app that is not a SEBI-registered adviser cannot give them, and should not.</li>
-        <li>"Users are simply reckless." Some are. But many cannot picture the risk, and that part is fixable.</li>
+        <li>
+          "Users need stock tips." An app that is not a SEBI-registered adviser cannot give them, and should not.{" "}
+          <span className="tag">[Assumption: my reading of SEBI's adviser rules, not legal advice.]</span>
+        </li>
+        <li>
+          "Users are simply reckless." Some are. But many cannot picture the risk, and that part is fixable. <A />
+        </li>
         <li>
           "A risk pop-up already exists, so we're done." A pop-up that people tap past does not count as understanding.{" "}
           <span className="tag">[Assumption: this is true of existing broker screens. I have not measured it.]</span>

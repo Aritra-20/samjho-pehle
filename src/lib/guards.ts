@@ -54,7 +54,7 @@ export function checkInput(text: string): InputGuardResult {
 }
 
 const AMOUNT_RE =
-  /(?:₹|\bRs\.?|\bINR)\s*([\d,]+(?:\.\d+)?)|([\d,]+(?:\.\d+)?)\s*(?:रुपये|rupees)/gi;
+  /(?:₹|रु\.?|\bRs\.?|\bINR)\s*([\d,]+(?:\.\d+)?)|([\d,]+(?:\.\d+)?)\s*(?:रुपये|rupees|INR|\/-)/gi;
 
 export function extractRupeeAmounts(text: string): number[] {
   const out: number[] = [];
@@ -62,6 +62,21 @@ export function extractRupeeAmounts(text: string): number[] {
     const raw = (m[1] ?? m[2] ?? "").replace(/,/g, "");
     const n = Number(raw);
     if (raw && Number.isFinite(n)) out.push(n);
+  }
+  return out;
+}
+
+// Catches amounts written without a currency sign: any bare number of 1,000 or more,
+// and any number followed by lakh / crore / thousand (so "1.5 lakh" cannot slip through).
+const NUMBER_RE = /(\d[\d,]*(?:\.\d+)?)(\s*(?:lakhs?|crores?|thousand|लाख|करोड़|हज़ार|हजार))?/gi;
+
+export function extractLargeNumbers(text: string): number[] {
+  const out: number[] = [];
+  for (const m of text.matchAll(NUMBER_RE)) {
+    const raw = m[1];
+    if (!raw) continue;
+    const n = Number(raw.replace(/,/g, ""));
+    if (Number.isFinite(n) && (n >= 1000 || m[2])) out.push(n);
   }
   return out;
 }
@@ -79,7 +94,7 @@ export interface OutputGuardResult {
 export function checkOutput(text: string, ctx: OutputGuardContext): OutputGuardResult {
   const reasons: string[] = [];
   if (!text || !text.includes(ctx.maxLossText)) reasons.push("missing exact max-loss text");
-  const bad = extractRupeeAmounts(text).filter(
+  const bad = [...extractRupeeAmounts(text), ...extractLargeNumbers(text)].filter(
     (a) => !ctx.allowedAmounts.some((v) => Math.abs(v - a) < 0.01),
   );
   if (bad.length) reasons.push(`rupee figure not from code: ${bad.join(", ")}`);

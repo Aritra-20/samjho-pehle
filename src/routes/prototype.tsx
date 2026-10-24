@@ -209,6 +209,9 @@ function Prototype() {
 
       {order && (
         <section className="mt-10">
+          <p className="mb-3 text-sm text-muted-foreground">
+            Synthetic demo figures: calculated in code from the values entered above, not from real market data.
+          </p>
           <div className="grid gap-4 sm:grid-cols-3">
             <div ref={cardRef} data-testid="max-loss-card" className="rounded-lg border-2 border-primary bg-card p-4">
               <p className="text-sm text-muted-foreground">Max loss</p>

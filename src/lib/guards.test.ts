@@ -50,6 +50,18 @@ describe("output guard", () => {
   it("rejects rupee figures the code did not compute", () => {
     expect(checkOutput("Maximum loss: ₹7,500. You could make ₹50,000.", ctx).ok).toBe(false);
   });
+  it.each([
+    "You could make 99999 if it rises.",
+    "You could make रु 99999.",
+    "You could make 99,999/-.",
+    "You could make 1.5 lakh rupees.",
+    "You could make 2 crore.",
+  ])("rejects a figure written without a ₹ sign: %s", (extra) => {
+    expect(checkOutput(`Maximum loss: ₹7,500. ${extra}`, ctx).ok).toBe(false);
+  });
+  it("still accepts the strike and break-even index levels, which the code produced", () => {
+    expect(checkOutput("Maximum loss: ₹7,500. Strike 20000, break-even 20,150.", ctx).ok).toBe(true);
+  });
   it("rejects advice wording", () => {
     expect(checkOutput("Maximum loss: ₹7,500. I recommend this trade.", ctx).ok).toBe(false);
     expect(checkOutput("Maximum loss: ₹7,500. Nifty will go up.", ctx).ok).toBe(false);

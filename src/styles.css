@@ -120,9 +120,53 @@
   }
 }
 
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
 @media print {
   header,
   footer {
     display: none;
+  }
+  /* The problem memo must fit one printed A4 page. */
+  body {
+    font-size: 9.5pt;
+    line-height: 1.35;
+  }
+  .doc {
+    max-width: none;
+    padding: 0;
+  }
+  .doc h1 {
+    font-size: 18pt;
+  }
+  .doc h2 {
+    font-size: 12pt;
+    margin-top: 0.7rem;
+    margin-bottom: 0.25rem;
+  }
+  .doc p,
+  .doc ol,
+  .doc ul {
+    margin-bottom: 0.4rem;
+  }
+  .doc ol,
+  .doc ul {
+    row-gap: 0.15rem;
+  }
+  .doc table {
+    margin-bottom: 0.4rem;
+    font-size: 8.5pt;
+  }
+  .doc th,
+  .doc td {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+  }
+  .doc .tag {
+    font-size: 8pt;
+    white-space: normal;
   }
 }

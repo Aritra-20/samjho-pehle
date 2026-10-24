@@ -45,6 +45,13 @@ function Spec() {
         spread of languages and questions without a huge amount of hand-written text.
       </p>
       <p>
+        To be fair to the alternative: this prototype already has a fixed template that explains the core result in
+        both languages and answers a short list of terms, and it is what users see whenever the AI is unavailable or
+        fails a check. So the AI's extra value is only the open-ended wording and follow-up questions, and I have not
+        shown that it beats the template. <span className="tag">[Assumption: users prefer the AI wording.]</span> The
+        memo lists this as an unknown to test.
+      </p>
+      <p>
         If AI wrote the numbers it would sometimes be wrong, which is unacceptable when the product handles people's
         money. So the design is: <strong>code decides the numbers, AI only explains them.</strong>
       </p>
@@ -94,8 +101,8 @@ function Spec() {
                 If the AI call fails, is unavailable, or its text breaks a rule (a rupee figure the code did not
                 produce, advice or prediction wording, or a missing max-loss figure), the AI text is discarded. The
                 user instead sees a fixed template explanation written by code from the same numbers, labelled
-                "Template explanation (AI unavailable)". Nothing the AI wrote is shown. The failure is logged to the
-                browser console only; nothing is stored.
+                "Template explanation (AI unavailable)". Nothing the AI wrote is shown. A short error note (never the
+                user's text) goes to the browser console and the server log; nothing the user typed is stored.
               </td>
             </tr>
           </tbody>
@@ -122,8 +129,8 @@ function Spec() {
             <tr>
               <td>3 Only code-made rupee figures</td>
               <td>
-                Output check: every rupee amount in the AI text must match a code-computed value, otherwise the text is
-                thrown away.
+                Output check: every rupee amount, and every number of 1,000 or more or written with lakh or crore, must
+                match a code-computed value, otherwise the text is thrown away.
               </td>
             </tr>
             <tr>
@@ -147,6 +154,14 @@ function Spec() {
 
       <h2>5. Known gaps (honest list)</h2>
       <ul>
+        <li>
+          Rule 4 lists names and bank details, but the input check only recognises PAN-, Aadhaar-, phone- and long
+          digit-shaped text. A plain name is not detected.
+        </li>
+        <li>
+          The output check does not catch an amount spelled out in words (for example "ninety thousand"), or a small
+          figure written with no ₹ sign.
+        </li>
         <li>
           The input check uses pattern matching, so a cleverly reworded advice question can slip past it. The output
           check and the AI's instructions are the second and third layers.
