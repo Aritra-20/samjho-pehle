@@ -20,6 +20,7 @@ npm test
 ## AI configuration (optional)
 With no key the app runs fully in template mode (a deterministic explanation written by code). To turn on AI explanations set one of these on the server:
 - `ANTHROPIC_API_KEY` (optional `ANTHROPIC_MODEL`)
+- `GEMINI_API_KEY` (optional `GEMINI_MODEL`)
 - `LOVABLE_API_KEY` (optional `LOVABLE_AI_MODEL`)
 
 Every AI reply passes the output guard (exact max-loss text, only code-made rupee figures, no advice or prediction wording, no personal-data-shaped text) or it is discarded.

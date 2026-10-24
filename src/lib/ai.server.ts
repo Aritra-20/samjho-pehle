@@ -3,12 +3,13 @@
 //
 // Keys are read from environment variables on the server only:
 //   ANTHROPIC_API_KEY  -> Claude (Messages API)
+//   GEMINI_API_KEY     -> Google Gemini (optional GEMINI_MODEL, default gemini-2.5-flash)
 //   LOVABLE_API_KEY    -> Lovable AI gateway (set automatically inside Lovable Cloud)
 
 const TIMEOUT_MS = 20_000;
 
 export function hasAiKey(): boolean {
-  return Boolean(process.env["ANTHROPIC_API_KEY"] || process.env["LOVABLE_API_KEY"]);
+  return Boolean(process.env["ANTHROPIC_API_KEY"] || process.env["GEMINI_API_KEY"] || process.env["LOVABLE_API_KEY"]);
 }
 
 async function withTimeout(url: string, init: RequestInit): Promise<Response> {
@@ -42,6 +43,25 @@ export async function generateText(instructions: string, prompt: string): Promis
     if (!res.ok) throw new Error(`Anthropic API ${res.status}`);
     const json = (await res.json()) as { content?: { type: string; text?: string }[] };
     const text = (json.content ?? []).map((b) => (b.type === "text" ? (b.text ?? "") : "")).join("").trim();
+    return text || null;
+  }
+
+  const geminiKey = process.env["GEMINI_API_KEY"];
+  if (geminiKey) {
+    const model = process.env["GEMINI_MODEL"] ?? "gemini-2.5-flash";
+    // Key goes in a header, never in the URL.
+    const res = await withTimeout(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-goog-api-key": geminiKey },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: instructions }] },
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 800, temperature: 0.2, thinkingConfig: { thinkingBudget: 0 } },
+      }),
+    });
+    if (!res.ok) throw new Error(`Gemini API ${res.status}`);
+    const json = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
+    const text = (json.candidates?.[0]?.content?.parts ?? []).map((p) => p.text ?? "").join("").trim();
     return text || null;
   }
 
