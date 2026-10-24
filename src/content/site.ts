@@ -4,7 +4,7 @@ export const OWNER = "Aritra Pal";
 export const MAIN_PORTFOLIO_URL = "https://www.aritrapal.me/";
 
 /** Link to the CRISP build thread. Leave empty until it is ready. */
-export const CRISP_THREAD_URL: string = "";
+export const CRISP_THREAD_URL: string = "/build-thread";
 
 /** SEBI's own paper: "Profitability of Individual Traders in the Equity Derivatives Segment (FY25-FY26)", Aug 2026. */
 export const SEBI_PAPER_URL = "https://www.sebi.gov.in/sebi_data/attachdocs/aug-2026/1787233506209.pdf";

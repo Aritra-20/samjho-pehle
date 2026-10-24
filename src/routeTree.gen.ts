@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BehaviourSpecRouteImport } from './routes/behaviour-spec'
+import { Route as BuildThreadRouteImport } from './routes/build-thread'
 import { Route as ProblemMemoRouteImport } from './routes/problem-memo'
 import { Route as PrototypeRouteImport } from './routes/prototype'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const BehaviourSpecRoute = BehaviourSpecRouteImport.update({
   id: '/behaviour-spec',
   path: '/behaviour-spec',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuildThreadRoute = BuildThreadRouteImport.update({
+  id: '/build-thread',
+  path: '/build-thread',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProblemMemoRoute = ProblemMemoRouteImport.update({
@@ -38,12 +44,14 @@ const PrototypeRoute = PrototypeRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/behaviour-spec': typeof BehaviourSpecRoute
+  '/build-thread': typeof BuildThreadRoute
   '/problem-memo': typeof ProblemMemoRoute
   '/prototype': typeof PrototypeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/behaviour-spec': typeof BehaviourSpecRoute
+  '/build-thread': typeof BuildThreadRoute
   '/problem-memo': typeof ProblemMemoRoute
   '/prototype': typeof PrototypeRoute
 }
@@ -51,20 +59,29 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/behaviour-spec': typeof BehaviourSpecRoute
+  '/build-thread': typeof BuildThreadRoute
   '/problem-memo': typeof ProblemMemoRoute
   '/prototype': typeof PrototypeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/behaviour-spec' | '/problem-memo' | '/prototype'
+  fullPaths:
+    '/' | '/behaviour-spec' | '/build-thread' | '/problem-memo' | '/prototype'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/behaviour-spec' | '/problem-memo' | '/prototype'
-  id: '__root__' | '/' | '/behaviour-spec' | '/problem-memo' | '/prototype'
+  to: '/' | '/behaviour-spec' | '/build-thread' | '/problem-memo' | '/prototype'
+  id:
+    | '__root__'
+    | '/'
+    | '/behaviour-spec'
+    | '/build-thread'
+    | '/problem-memo'
+    | '/prototype'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BehaviourSpecRoute: typeof BehaviourSpecRoute
+  BuildThreadRoute: typeof BuildThreadRoute
   ProblemMemoRoute: typeof ProblemMemoRoute
   PrototypeRoute: typeof PrototypeRoute
 }
@@ -83,6 +100,13 @@ declare module '@tanstack/react-router' {
       path: '/behaviour-spec'
       fullPath: '/behaviour-spec'
       preLoaderRoute: typeof BehaviourSpecRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/build-thread': {
+      id: '/build-thread'
+      path: '/build-thread'
+      fullPath: '/build-thread'
+      preLoaderRoute: typeof BuildThreadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/problem-memo': {
@@ -105,6 +129,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BehaviourSpecRoute: BehaviourSpecRoute,
+  BuildThreadRoute: BuildThreadRoute,
   ProblemMemoRoute: ProblemMemoRoute,
   PrototypeRoute: PrototypeRoute,
 }
